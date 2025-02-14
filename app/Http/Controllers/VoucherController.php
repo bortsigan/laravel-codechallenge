@@ -61,7 +61,7 @@ class VoucherController extends Controller
         $voucher = $this->voucherCodeService->generateUniqueCode(auth('sanctum')->user());
 
         if (!$voucher) {
-            return response()->json(['message' => 'Limited reached.'], 422);
+            return response()->json(['message' => 'Limit reached.'], 422);
         }
 
         return response()->json(['code' => $voucher->code], 200);
