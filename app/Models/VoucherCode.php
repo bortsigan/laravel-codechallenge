@@ -12,9 +12,14 @@ class VoucherCode extends Model
 
     protected $fillable = ['user_id', 'code'];
 
-    public function generateUniqueCode()
+    /**
+     * Voucher Code is a Random 5 Alphanumeric Character that are unique
+     * 
+     * @return string
+     */
+    public function generateUniqueCode(): String
     {
-        # check if the code exist and if not? create the code
+        # if code doesn't exist yet then create a new one
         do {
             $code = Str::random(5);
         } while (self::where('code', $code)->exists());

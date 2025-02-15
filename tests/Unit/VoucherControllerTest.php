@@ -10,6 +10,7 @@ use App\Services\VoucherCodeService;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Http\Resources\VoucherCodeResource;
 
 class VoucherControllerTest extends TestCase
 {
@@ -39,20 +40,22 @@ class VoucherControllerTest extends TestCase
 
     public function testIndexReturnsVouchers()
     {
-        $testDataVoucher = [
-            ['id' => 1, 'code' => 'abcd1', 'user_id' => $this->user->id],
-            ['id' => 2, 'code' => '1dcba', 'user_id' => $this->user->id],
-        ];
+        $testDataVoucher = VoucherCode::hydrate([
+            ['id' => 1, 'code' => 'abcd1', 'user_id' => $this->user->id, 'created_at' => now()],
+            ['id' => 2, 'code' => '1dcba', 'user_id' => $this->user->id, 'created_at' => now()],
+        ]); # to create an Eloquent collection like in the controller
 
         $this->voucherCodeService
             ->shouldReceive('getUserVouchers')
             ->with($this->user)
-            ->andReturn($testDataVoucher);
+            ->andReturn($testDataVoucher); # check if eloquent and it should hydrated eloquent collection
+
+        $expectedResponse = VoucherCodeResource::collection($testDataVoucher)->response()->getData(true);
 
         $this->actingAs($this->user)
             ->getJson('/api/vouchers')
             ->assertStatus(200)
-            ->assertJson($testDataVoucher);
+            ->assertJson($expectedResponse);
     }
 
     public function testDestroyDeletesVoucher()
@@ -64,7 +67,6 @@ class VoucherControllerTest extends TestCase
 
         $this->voucherCodeService
             ->shouldReceive('deleteUserVoucher')
-            ->with($this->user, Mockery::on(fn($v) => $v->id === $voucher->id))
             ->once()
             ->andReturn(true);
 

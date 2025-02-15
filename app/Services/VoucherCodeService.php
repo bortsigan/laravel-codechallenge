@@ -7,6 +7,7 @@ use App\Models\VoucherCode;
 use Illuminate\Contracts\Auth\Authenticatable;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 
 class VoucherCodeService 
 {
@@ -34,17 +35,16 @@ class VoucherCodeService
         ]);
     }
 
-    public function getUserVouchers(Authenticatable $user): ?Array
+    public function getUserVouchers(Authenticatable $user): ?Collection
     {
         if (!($user instanceof User)) {
             abort(401, 'Unauthorized');
         }
 
         return $this->voucherCode
-                    ->select(['id', 'code'])
+                    ->select(['id', 'code', 'created_at'])
                     ->where('user_id',$user->id)
-                    ->get()
-                    ?->toArray();
+                    ->get();
     }
 
     public function deleteUserVoucher(Authenticatable $user, VoucherCode $voucherCode): bool   

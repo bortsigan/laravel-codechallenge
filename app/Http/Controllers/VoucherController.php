@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Services\VoucherCodeService;
 use App\Models\VoucherCode;
-use App\Models\User;
+use App\Http\Resources\VoucherCodeResource;
+
 
 use Exception;
 
@@ -25,11 +27,11 @@ class VoucherController extends Controller
      * 
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $vouchers = $this->voucherCodeService->getUserVouchers(auth('sanctum')->user());
-        
-        return response()->json($vouchers, 200);
+
+        return VoucherCodeResource::collection($vouchers);
     }
 
     /**
