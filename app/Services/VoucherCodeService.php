@@ -30,9 +30,20 @@ class VoucherCodeService
             return null;
         }
 
-        return $user->vouchers()->create([
-            'code' => $this->voucherCode->generateUniqueCode()
-        ]);
+        try {
+            DB::beginTransaction();
+
+            $voucherCode = $user->vouchers()->create([
+                'code' => $this->voucherCode->generateUniqueCode()
+            ]);
+
+            DB::commit();
+
+            return $voucherCode;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
     }
 
     public function getUserVouchers(Authenticatable $user): ?Collection
@@ -65,6 +76,7 @@ class VoucherCodeService
 
             return true;
         } catch (Exception $e) {
+            DB::rollBack();
             throw new Exception($e->getMessage());
         }
     }

@@ -4,7 +4,7 @@
 - clone the repo https://github.com/bortsigan/laravel-codechallenge.git
 - go to the project folder
 - cp .env.example .env
-- setup the DB configuration
+- setup the DB configuration 
 ```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -13,6 +13,15 @@ DB_DATABASE=*******
 DB_USERNAME=*******
 DB_PASSWORD=*******
 DB_SOCKET=********
+```
+- setup mailtrap configuration
+
+```
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=********
+MAIL_PASSWORD=********
 ```
 - composer install
 - php artisan serve
